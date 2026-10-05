@@ -4,6 +4,8 @@ import { ProductFilters } from "@/components/product/product-filters";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
+import { auth } from "@/lib/auth";
+
 export const metadata = {
   title: "All Products | Shopora",
   description: "Shop our premium collection of furniture and decor.",
@@ -14,6 +16,8 @@ interface ProductsPageProps {
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const session = await auth();
+  
   // Parse search params
   const params = await searchParams;
   const categoryParam = params.category as string | undefined;
@@ -40,7 +44,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     orderBy = { price: 'desc' };
   }
 
-  const [products, categories] = await Promise.all([
+  const [products, categories, userWishlist] = await Promise.all([
     db.product.findMany({
       where,
       orderBy,
@@ -55,7 +59,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     db.category.findMany({
       orderBy: { name: 'asc' },
     }),
+    session?.user ? db.wishlist.findMany({
+      where: { userId: session.user.id },
+      select: { productId: true }
+    }) : Promise.resolve([])
   ]);
+
+  const wishlistedIds = new Set(userWishlist.map(w => w.productId));
 
   return (
     <div className="w-full pb-24">
@@ -118,7 +128,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product as any} />
+              <ProductCard key={product.id} product={product as any} isWishlisted={wishlistedIds.has(product.id)} />
             ))}
           </div>
         ) : (

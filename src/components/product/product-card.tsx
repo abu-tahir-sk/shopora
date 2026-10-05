@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { WishlistButton } from "./wishlist-button";
+import { QuickAddButton } from "./quick-add-button";
 import type { Product, ProductImage } from "@prisma/client";
 
 type ProductWithImages = Product & {
@@ -11,9 +13,10 @@ type ProductWithImages = Product & {
 interface ProductCardProps {
   product: ProductWithImages;
   className?: string;
+  isWishlisted?: boolean;
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, isWishlisted = false }: ProductCardProps) {
   const primaryImage = product.images?.[0]?.url || "https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80";
   const secondaryImage = product.images?.[1]?.url || "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&q=80";
   
@@ -38,10 +41,14 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </div>
         
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 z-20 h-8 w-8 flex items-center justify-center rounded-full bg-background/80 backdrop-blur opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background hover:text-brand">
-          <Heart className="h-4 w-4" />
-          <span className="sr-only">Add to wishlist</span>
-        </button>
+        <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+          <WishlistButton 
+            productId={product.id} 
+            initialIsWishlisted={isWishlisted}
+            className="h-8 w-8 flex items-center justify-center bg-background/80 hover:bg-background"
+            iconClassName="h-4 w-4"
+          />
+        </div>
 
         {/* Images */}
         <Link href={`/product/${product.slug}`} className="absolute inset-0 z-10">
@@ -56,10 +63,17 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </Link>
         
         {/* Quick Add */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
-          <Button className="w-full bg-background text-foreground hover:bg-background/90 font-medium tracking-wide uppercase text-xs" disabled={product.stock === 0}>
-            {product.stock === 0 ? "Out of Stock" : "Quick Add"}
-          </Button>
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 focus-within:translate-y-0 transition-transform duration-300 z-20">
+          <QuickAddButton 
+            product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              stock: product.stock,
+              image: primaryImage,
+              brand: product.brand,
+            }} 
+          />
         </div>
       </div>
       

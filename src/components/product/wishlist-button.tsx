@@ -5,6 +5,7 @@ import { Heart } from "lucide-react";
 import { toggleWishlist } from "@/app/actions/wishlist";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface WishlistButtonProps {
@@ -23,6 +24,7 @@ export function WishlistButton({
   const [isWishlisted, setIsWishlisted] = useState(initialIsWishlisted);
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -48,6 +50,7 @@ export function WishlistButton({
       } else {
         toast.info("Removed from wishlist");
       }
+      router.refresh();
     } else {
       // Revert on error
       setIsWishlisted(previousState);
