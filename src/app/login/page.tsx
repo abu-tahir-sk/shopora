@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,7 +32,16 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const error = searchParams.get("error");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (error === "OAuthAccountNotLinked") {
+      toast.error("Email already in use. Please sign in with your original method.");
+    } else if (error) {
+      toast.error("Authentication error occurred. Please try again.");
+    }
+  }, [error]);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),

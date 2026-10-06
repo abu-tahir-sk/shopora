@@ -3,16 +3,9 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { 
   LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Tags,
-  Ticket,
-  MessageSquare,
-  LogOut,
-  ChevronLeft,
-  ClipboardList
+  ChevronLeft
 } from "lucide-react";
+import { SidebarNav } from "./sidebar-nav";
 
 export default async function AdminLayout({
   children,
@@ -25,44 +18,28 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  const navItems = [
-    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Products", href: "/admin/products", icon: Package },
-    { name: "Inventory", href: "/admin/inventory", icon: ClipboardList },
-    { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-    { name: "Users", href: "/admin/users", icon: Users },
-    { name: "Categories", href: "/admin/categories", icon: Tags },
-    { name: "Coupons", href: "/admin/coupons", icon: Ticket },
-    { name: "Reviews", href: "/admin/reviews", icon: MessageSquare },
-  ];
-
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/20">
+    <div className="flex h-screen overflow-hidden bg-[#f8fafc]">
       {/* Admin Sidebar */}
-      <aside className="w-64 flex-col hidden md:flex border-r bg-background">
-        <div className="h-16 flex items-center px-6 border-b">
-          <Link href="/admin" className="font-bold text-xl tracking-tight">
-            SHOPORA<span className="text-muted-foreground font-normal">.admin</span>
+      <aside className="w-72 flex-col hidden md:flex bg-[#0f172a] text-slate-300 border-r border-slate-800 shadow-xl z-20">
+        <div className="h-20 flex items-center px-8 border-b border-slate-800/60 bg-[#0f172a]/95 backdrop-blur">
+          <Link href="/admin" className="font-bold text-2xl tracking-tight text-white flex items-center gap-2.5 group">
+            <div className="bg-indigo-500 p-2 rounded-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-300">
+              <LayoutDashboard className="h-5 w-5 text-white" />
+            </div>
+            SHOPORA<span className="text-indigo-400 font-light text-xl -ml-1">.admin</span>
           </Link>
         </div>
-        <div className="flex-1 overflow-y-auto py-4">
-          <nav className="space-y-1 px-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <item.icon className="h-4 w-4" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+        <div className="flex-1 overflow-y-auto py-8 custom-scrollbar">
+          <div className="px-8 mb-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+            Main Menu
+          </div>
+          <SidebarNav />
         </div>
-        <div className="p-4 border-t">
+        <div className="p-6 border-t border-slate-800/60 bg-slate-900/50">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-medium bg-slate-800/80 hover:bg-slate-700 text-white transition-all shadow-sm hover:shadow border border-slate-700 hover:border-slate-600"
           >
             <ChevronLeft className="h-4 w-4" />
             Back to Store
@@ -71,8 +48,9 @@ export default async function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-6 max-w-6xl">
+      <main className="flex-1 overflow-y-auto relative bg-[#f4f7f9]">
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-slate-200/60 to-transparent pointer-events-none" />
+        <div className="container mx-auto p-8 max-w-7xl relative z-10">
           {children}
         </div>
       </main>

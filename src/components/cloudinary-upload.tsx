@@ -6,6 +6,9 @@ import { ImagePlus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
+// Fallback Cloudinary configuration
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "demo";
+
 interface CloudinaryUploadProps {
   onUpload: (urls: string[]) => void;
   defaultImages?: string[];
@@ -53,6 +56,7 @@ export function CloudinaryUpload({ onUpload, defaultImages = [] }: CloudinaryUpl
       </div>
 
       <CldUploadWidget 
+        cloudName={CLOUD_NAME}
         uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "shopora"}
         onSuccess={handleUpload}
       >

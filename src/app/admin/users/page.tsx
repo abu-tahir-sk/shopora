@@ -6,6 +6,7 @@ import {
   User as UserIcon,
   ShoppingBag
 } from "lucide-react";
+import { UserActions } from "./user-actions";
 
 export const metadata = {
   title: "Users | Admin",
@@ -44,6 +45,7 @@ export default async function UsersPage() {
               <th className="px-6 py-4 font-medium text-center">Orders</th>
               <th className="px-6 py-4 font-medium text-center">Reviews</th>
               <th className="px-6 py-4 font-medium">Joined</th>
+              <th className="px-6 py-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -63,8 +65,11 @@ export default async function UsersPage() {
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium
                     ${user.role === "ADMIN" ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300" : 
+                      user.role === "SELLER" ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300" :
                       "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"}`}>
-                    {user.role === "ADMIN" ? <ShieldCheck className="h-3.5 w-3.5" /> : <UserIcon className="h-3.5 w-3.5" />}
+                    {user.role === "ADMIN" ? <ShieldCheck className="h-3.5 w-3.5" /> : 
+                     user.role === "SELLER" ? <ShieldAlert className="h-3.5 w-3.5" /> : 
+                     <UserIcon className="h-3.5 w-3.5" />}
                     {user.role}
                   </span>
                 </td>
@@ -80,11 +85,14 @@ export default async function UsersPage() {
                 <td className="px-6 py-4 text-muted-foreground">
                   {format(new Date(user.createdAt), "MMM d, yyyy")}
                 </td>
+                <td className="px-6 py-4 text-right">
+                  <UserActions user={{ id: user.id, role: user.role, name: user.name }} />
+                </td>
               </tr>
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                   No users found.
                 </td>
               </tr>

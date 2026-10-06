@@ -178,8 +178,8 @@ function AdjustStockDialog({ item }: { item: InventoryItem }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm">Adjust</Button>
+      <DialogTrigger render={<Button size="sm" />}>
+        Adjust
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -202,7 +202,7 @@ function AdjustStockDialog({ item }: { item: InventoryItem }) {
           </div>
           <div className="grid gap-2">
             <Label>Reason</Label>
-            <Select onValueChange={setReason} value={reason} required>
+            <Select onValueChange={(val) => setReason(val || "")} value={reason} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>

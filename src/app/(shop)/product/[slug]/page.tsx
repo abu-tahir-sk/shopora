@@ -37,7 +37,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       reviews: {
         where: { isApproved: true },
         orderBy: { createdAt: 'desc' },
-        include: { user: { select: { name: true, avatar: true } } },
+        include: { user: { select: { name: true, image: true } } },
       },
     },
   }) as any;
@@ -82,7 +82,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           
           {/* Left Column - Image Stack */}
           <div className="w-full lg:w-3/5 flex flex-col gap-4">
-            {product.images.map((image, idx) => (
+            {product.images.map((image: any, idx: number) => (
               <div key={image.id} className={`bg-secondary w-full relative ${idx === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}>
                 {/* Fallback to background image for easy scaling if next/image isn't configured */}
                 <div 
@@ -140,25 +140,25 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   <div className="flex flex-col gap-3">
                     <span className="text-sm font-medium uppercase tracking-wide">Color</span>
                     <div className="flex flex-wrap gap-2">
-                      {Array.from(new Set(product.variants.map(v => v.color).filter(Boolean))).map((color, idx) => (
+                      {Array.from(new Set(product.variants.map((v: any) => v.color).filter(Boolean))).map((color: any, idx: number) => (
                         <button key={idx} className={`px-4 py-2 text-sm border transition-colors ${idx === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-foreground/50'}`}>
-                          {color}
+                          {String(color)}
                         </button>
                       ))}
                     </div>
                   </div>
                   
                   {/* Sizes */}
-                  {product.variants.some(v => v.size) && (
+                  {product.variants.some((v: any) => v.size) && (
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium uppercase tracking-wide">Size</span>
                         <button className="text-xs text-muted-foreground underline underline-offset-4">Size Guide</button>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {Array.from(new Set(product.variants.map(v => v.size).filter(Boolean))).map((size, idx) => (
+                        {Array.from(new Set(product.variants.map((v: any) => v.size).filter(Boolean))).map((size: any, idx: number) => (
                           <button key={idx} className={`px-4 py-2 text-sm border transition-colors ${idx === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-foreground/50'}`}>
-                            {size}
+                            {String(size)}
                           </button>
                         ))}
                       </div>
