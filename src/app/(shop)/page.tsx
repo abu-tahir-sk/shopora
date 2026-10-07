@@ -54,7 +54,7 @@ export default async function Home() {
             <Button size="lg" className="rounded-none bg-white text-black hover:bg-white/90 px-8 h-14 text-sm tracking-widest uppercase">
               <Link href="/products">Shop Collection</Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-none border-white text-white hover:bg-white hover:text-black px-8 h-14 text-sm tracking-widest uppercase">
+            <Button size="lg" variant="outline" className="rounded-none border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-black px-8 h-14 text-sm tracking-widest uppercase">
               <Link href="/products?sort=newest">Explore New Arrivals</Link>
             </Button>
           </div>
