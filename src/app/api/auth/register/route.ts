@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send welcome email (non-blocking, don't throw if it fails)
+
     sendEmail({
       to: email,
       subject: "Welcome to Shopora",
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: error.issues[0].message }, { status: 400 });
     }
-    
+
     console.error("Registration error:", error);
     return NextResponse.json(
       { message: "Something went wrong" },
