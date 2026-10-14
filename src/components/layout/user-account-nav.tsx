@@ -51,7 +51,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         </div>
         <DropdownMenuSeparator />
         {user.role === "ADMIN" && (
-          <DropdownMenuItem render={<Link href="/admin/dashboard" />}>
+          <DropdownMenuItem render={<Link href="/admin" />}>
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Admin Dashboard
           </DropdownMenuItem>
