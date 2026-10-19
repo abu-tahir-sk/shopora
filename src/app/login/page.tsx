@@ -78,7 +78,7 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+        <CardTitle className="text-2xl font-bold">Welcome back </CardTitle>
         <CardDescription>
           Enter your email and password to login to your account
         </CardDescription>

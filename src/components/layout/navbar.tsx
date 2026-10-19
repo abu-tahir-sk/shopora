@@ -18,11 +18,11 @@ export async function Navbar() {
       <div className="bg-brand text-brand-foreground text-xs font-medium tracking-wide py-2 text-center flex justify-center items-center">
         Free shipping on orders over ₹999
       </div>
-      
+
       {/* Main Header */}
       <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-colors duration-300">
         <div className="px-4 md:px-8 h-16 flex items-center justify-between">
-          
+
           {/* Mobile Left */}
           <div className="flex items-center md:hidden">
             <Button variant="ghost" size="icon" className="mr-2">
@@ -34,7 +34,7 @@ export async function Navbar() {
           {/* Logo */}
           <div className="flex items-center justify-center md:justify-start flex-1 md:flex-none">
             <Link href="/" className="flex items-center gap-2">
-              <span className="font-bold text-2xl tracking-tighter uppercase">Shopora</span>
+              <span className="font-bold text-2xl tracking-tighter uppercase">Shopo<span>ora</span></span>
             </Link>
           </div>
 
@@ -60,7 +60,7 @@ export async function Navbar() {
               <Search className="h-4 w-4" />
               <span className="sr-only">Search</span>
             </Button>
-            
+
             <Button variant="ghost" size="icon" className="hidden md:inline-flex rounded-full">
               <Heart className="h-4 w-4" />
               <span className="sr-only">Wishlist</span>
@@ -77,7 +77,7 @@ export async function Navbar() {
 
             <CartButton />
             <CartSidebar isLoggedIn={!!session?.user} />
-            
+
             <ThemeToggle />
           </div>
         </div>
