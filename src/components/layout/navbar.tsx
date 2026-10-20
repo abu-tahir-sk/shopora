@@ -16,7 +16,7 @@ export async function Navbar() {
     <div className="flex flex-col w-full sticky top-0 z-50">
       {/* Announcement Bar */}
       <div className="bg-brand text-brand-foreground text-xs font-medium tracking-wide py-2 text-center flex justify-center items-center">
-        Free shipping on orders over ₹999
+        Free shipping on orders over ₹9999
       </div>
 
       {/* Main Header */}
@@ -54,7 +54,7 @@ export async function Navbar() {
             </Link>
           </nav>
 
-          {/* Right Side Actions */}
+
           <div className="flex items-center justify-end gap-1 md:gap-4 flex-1 md:flex-none">
             <Button variant="ghost" size="icon" className="rounded-full">
               <Search className="h-4 w-4" />
