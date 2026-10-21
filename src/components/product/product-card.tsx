@@ -18,7 +18,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, className, isWishlisted = false }: ProductCardProps) {
   const primaryImage = product.images?.[0]?.url || "https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80";
-  const secondaryImage = product.images?.[1]?.url || "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&q=80";
+  const secondaryImage = product.images?.[1]?.url;
+  const hasSecondaryImage = Boolean(secondaryImage && secondaryImage !== primaryImage);
   
   const discount = product.comparePrice 
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) 
@@ -53,13 +54,20 @@ export function ProductCard({ product, className, isWishlisted = false }: Produc
         {/* Images */}
         <Link href={`/product/${product.slug}`} className="absolute inset-0 z-10">
           <div 
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 group-hover:opacity-0"
+            className={cn(
+              "absolute inset-0 bg-cover bg-center transition-all duration-500",
+              hasSecondaryImage 
+                ? "group-hover:opacity-0" 
+                : "group-hover:scale-105"
+            )}
             style={{ backgroundImage: `url("${primaryImage}")` }}
           />
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
-            style={{ backgroundImage: `url("${secondaryImage}")` }}
-          />
+          {hasSecondaryImage && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+              style={{ backgroundImage: `url("${secondaryImage}")` }}
+            />
+          )}
         </Link>
         
         {/* Quick Add */}

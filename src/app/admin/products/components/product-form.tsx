@@ -82,8 +82,10 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         toast.success("Product created successfully");
       }
       
-      // router.push("/admin/products") is handled by redirect() in server action
+      router.push("/admin/products");
+      router.refresh();
     } catch (error: any) {
+      if (error?.message === "NEXT_REDIRECT") return;
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsPending(false);
