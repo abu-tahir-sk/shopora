@@ -61,9 +61,11 @@ export async function Navbar() {
               <span className="sr-only">Search</span>
             </Button>
 
-            <Button variant="ghost" size="icon" className="hidden md:inline-flex rounded-full">
-              <Heart className="h-4 w-4" />
-              <span className="sr-only">Wishlist</span>
+            <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex rounded-full">
+              <Link href="/wishlist">
+                <Heart className="h-4 w-4" />
+                <span className="sr-only">Wishlist</span>
+              </Link>
             </Button>
 
             {session?.user ? (
