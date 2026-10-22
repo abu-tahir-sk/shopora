@@ -39,29 +39,28 @@ export function Footer() {
               <li><Link href="/products" className="text-muted-foreground hover:text-foreground font-light transition-colors">All Products</Link></li>
               <li><Link href="/products?sort=newest" className="text-muted-foreground hover:text-foreground font-light transition-colors">New Arrivals</Link></li>
               <li><Link href="/products" className="text-muted-foreground hover:text-foreground font-light transition-colors">Best Sellers</Link></li>
-              <li><Link href="/products" className="text-muted-foreground hover:text-foreground font-light transition-colors">Categories</Link></li>
-              <li><Link href="/products" className="text-muted-foreground hover:text-foreground font-light transition-colors">Collections</Link></li>
+              <li><Link href="/categories" className="text-muted-foreground hover:text-foreground font-light transition-colors">All Categories</Link></li>
+              <li><Link href="/cart" className="text-muted-foreground hover:text-foreground font-light transition-colors">Shopping Cart</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-6 tracking-wide uppercase text-xs">Support</h4>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Shipping & Returns</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">FAQ</Link></li>
+              <li><Link href="/shipping-returns" className="text-muted-foreground hover:text-foreground font-light transition-colors">Shipping & Returns</Link></li>
+              <li><Link href="/faq" className="text-muted-foreground hover:text-foreground font-light transition-colors">FAQ</Link></li>
               <li><Link href="/orders" className="text-muted-foreground hover:text-foreground font-light transition-colors">Track Order</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Contact Support</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground hover:text-foreground font-light transition-colors">Contact Support</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-6 tracking-wide uppercase text-xs">Company</h4>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">About Us</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Careers</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Journal</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground font-light transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/about" className="text-muted-foreground hover:text-foreground font-light transition-colors">About Us</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground hover:text-foreground font-light transition-colors">Design Studio</Link></li>
+              <li><Link href="/terms" className="text-muted-foreground hover:text-foreground font-light transition-colors">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground font-light transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

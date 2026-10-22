@@ -9,6 +9,7 @@ import { WishlistButton } from "@/components/product/wishlist-button";
 import { Button } from "@/components/ui/button";
 import { Star, Truck, ShieldCheck, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
+import { ProductGallery } from "@/components/product/product-gallery";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const p = await params;
@@ -80,17 +81,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <div className="container mx-auto px-4 md:px-8 pb-24 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative">
           
-          {/* Left Column - Image Stack */}
-          <div className="w-full lg:w-3/5 flex flex-col gap-4">
-            {product.images.map((image: any, idx: number) => (
-              <div key={image.id} className={`bg-secondary w-full relative ${idx === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}>
-                {/* Fallback to background image for easy scaling if next/image isn't configured */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url("${image.url}")` }}
-                />
-              </div>
-            ))}
+          {/* Left Column - Dynamic Gallery with Thumbnails & Carousel */}
+          <div className="w-full lg:w-3/5">
+            <ProductGallery images={product.images} productName={product.name} />
           </div>
 
           {/* Right Column - Product Details (Sticky) */}

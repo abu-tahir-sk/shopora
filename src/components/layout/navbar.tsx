@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingCart, Search, Menu, Heart, User } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { UserAccountNav } from "@/components/layout/user-account-nav";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CartButton } from "@/components/cart/cart-button";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
+import { SearchDialog } from "@/components/layout/search-dialog";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { cn } from "@/lib/utils";
 
 export async function Navbar() {
@@ -25,10 +27,7 @@ export async function Navbar() {
 
           {/* Mobile Left */}
           <div className="flex items-center md:hidden">
-            <Button variant="ghost" size="icon" className="mr-2">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
+            <MobileNav user={session?.user} />
           </div>
 
           {/* Logo */}
@@ -46,20 +45,16 @@ export async function Navbar() {
             <Link href="/products?sort=newest" className="transition-colors hover:text-brand text-foreground/70">
               New Arrivals
             </Link>
-            <Link href="/products" className="transition-colors hover:text-brand text-foreground/70">
-              Collections
+            <Link href="/categories" className="transition-colors hover:text-brand text-foreground/70">
+              Categories
             </Link>
             <Link href="/products" className="transition-colors hover:text-brand text-foreground/70">
               Offers
             </Link>
           </nav>
 
-
           <div className="flex items-center justify-end gap-1 md:gap-4 flex-1 md:flex-none">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Search className="h-4 w-4" />
-              <span className="sr-only">Search</span>
-            </Button>
+            <SearchDialog />
 
             <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex rounded-full">
               <Link href="/wishlist">

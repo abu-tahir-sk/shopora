@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import { ExportOrdersButton } from "./export-orders-button";
 
 export const metadata = {
   title: "Orders | Admin",
@@ -26,11 +27,28 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage and track all customer orders.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage, fulfill, and track all customer orders.
+          </p>
+        </div>
+        <ExportOrdersButton
+          orders={orders.map((o) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            createdAt: o.createdAt,
+            total: o.total,
+            orderStatus: o.orderStatus,
+            paymentStatus: o.paymentStatus,
+            user: {
+              name: o.user.name,
+              email: o.user.email,
+            },
+            itemsCount: o.items.length,
+          }))}
+        />
       </div>
 
       <div className="border rounded-md bg-card overflow-x-auto">

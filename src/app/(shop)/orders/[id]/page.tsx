@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { OrderStatus } from "@prisma/client";
+import { CancelOrderButton } from "@/components/orders/cancel-order-button";
 
 export const metadata: Metadata = {
   title: "Order Details | Shopora",
@@ -88,12 +89,17 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
             <ChevronLeft className="h-4 w-4 mr-1" />
             Back to All Orders
           </Link>
-          <Button asChild variant="outline" size="sm" className="rounded-full text-xs gap-1.5">
-            <Link href={`/invoice/${order.id}`} target="_blank">
-              <FileText className="h-3.5 w-3.5" />
-              Download Invoice
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            {(order.orderStatus === OrderStatus.PENDING || order.orderStatus === OrderStatus.CONFIRMED) && (
+              <CancelOrderButton orderId={order.id} orderNumber={order.orderNumber} />
+            )}
+            <Button asChild variant="outline" size="sm" className="rounded-full text-xs gap-1.5">
+              <Link href={`/invoice/${order.id}`} target="_blank">
+                <FileText className="h-3.5 w-3.5" />
+                Download Invoice
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Header Block */}
