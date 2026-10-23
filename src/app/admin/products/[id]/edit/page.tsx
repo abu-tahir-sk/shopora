@@ -9,10 +9,11 @@ export const metadata = {
   title: "Edit Product | Admin",
 };
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const p = await params;
   const [product, categories] = await Promise.all([
     db.product.findUnique({
-      where: { id: params.id },
+      where: { id: p.id },
       include: { 
         images: true,
         variants: true,

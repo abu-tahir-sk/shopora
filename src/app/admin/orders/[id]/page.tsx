@@ -11,9 +11,10 @@ export const metadata = {
   title: "Order Details | Admin",
 };
 
-export default async function OrderDetailsPage({ params }: { params: { id: string } }) {
+export default async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const p = await params;
   const order = await db.order.findUnique({
-    where: { id: params.id },
+    where: { id: p.id },
     include: {
       user: true,
       address: true,
