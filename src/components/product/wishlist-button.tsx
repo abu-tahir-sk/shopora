@@ -45,6 +45,13 @@ export function WishlistButton({
     
     if (res.success) {
       setIsWishlisted(res.isWishlisted as boolean);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("wishlist-updated", {
+            detail: { isWishlisted: res.isWishlisted },
+          })
+        );
+      }
       if (res.isWishlisted) {
         toast.success("Added to wishlist");
       } else {

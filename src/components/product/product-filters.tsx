@@ -103,11 +103,13 @@ export function ProductFilters({ categories }: { categories: { id: string, name:
             <select 
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="w-full border border-border bg-background p-2 text-sm rounded-none focus:outline-none focus:border-foreground"
+              className="w-full border border-border bg-background p-2.5 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-brand"
             >
               <option value="">Newest Arrivals</option>
+              <option value="featured">Featured Collection</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
             </select>
           </div>
         </div>

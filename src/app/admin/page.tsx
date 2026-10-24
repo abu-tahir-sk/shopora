@@ -160,16 +160,16 @@ export default async function AdminDashboardPage() {
               {recentOrders.map((order) => (
                 <div key={order.id} className="flex items-center p-5 hover:bg-slate-50 transition-colors">
                   <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                    <AvatarImage src={order.user.image || ""} alt={order.user.name || "Guest"} />
+                    <AvatarImage src={order.user?.image || ""} alt={order.user?.name || "Guest"} />
                     <AvatarFallback className="bg-indigo-100 text-indigo-700 font-semibold">
-                      {(order.user.name || "G").charAt(0).toUpperCase()}
+                      {(order.user?.name || "G").charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="ml-4 space-y-1 flex-1">
                     <p className="text-sm font-bold leading-none text-slate-900">
-                      {order.user.name || "Guest User"}
+                      {order.user?.name || "Guest User"}
                     </p>
-                    <p className="text-xs text-slate-500 font-medium">{order.user.email}</p>
+                    <p className="text-xs text-slate-500 font-medium">{order.user?.email || "No email"}</p>
                   </div>
                   <div className="text-right">
                     <div className="font-bold text-slate-900">
@@ -267,7 +267,7 @@ export default async function AdminDashboardPage() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-900">
-                        {txn.product.name} {txn.variant ? <span className="text-slate-500 font-medium">({txn.variant.color || ""} {txn.variant.size || ""})</span> : ""}
+                        {txn.product?.name || "Product"} {txn.variant ? <span className="text-slate-500 font-medium">({txn.variant.color || ""} {txn.variant.size || ""})</span> : ""}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">

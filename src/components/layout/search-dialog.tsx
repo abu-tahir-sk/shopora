@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, Loader2, X, ArrowRight, Sparkles } from "lucide-react";
@@ -12,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/utils";
 
 interface SearchProduct {
@@ -29,7 +27,11 @@ interface SearchProduct {
   images: Array<{ url: string }>;
 }
 
-export function SearchDialog() {
+interface SearchDialogProps {
+  showDesktopPill?: boolean;
+}
+
+export function SearchDialog({ showDesktopPill = true }: SearchDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -48,18 +50,17 @@ export function SearchDialog() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Debounced search
+  // Debounced search without synchronous setState in effect body
   useEffect(() => {
-    if (!query.trim() || query.trim().length < 2) {
-      setResults([]);
-      setIsLoading(false);
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
       return;
     }
 
-    setIsLoading(true);
     const timer = setTimeout(async () => {
+      setIsLoading(true);
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
         if (res.ok) {
           const data = await res.json();
           setResults(data.products || []);
@@ -73,6 +74,8 @@ export function SearchDialog() {
 
     return () => clearTimeout(timer);
   }, [query]);
+
+  const activeResults = query.trim().length >= 2 ? results : [];
 
   const handleSelectProduct = (slug: string) => {
     setOpen(false);
@@ -89,12 +92,34 @@ export function SearchDialog() {
 
   return (
     <>
+      {/* Desktop Search Pill Trigger */}
+      {showDesktopPill && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="hidden xl:flex items-center gap-3 px-3.5 py-1.5 rounded-full border border-border/80 bg-secondary/40 hover:bg-secondary/80 text-muted-foreground hover:text-foreground text-xs transition-all duration-200 w-52 2xl:w-64 justify-between group shadow-2xs"
+          title="Search products (Ctrl+K)"
+        >
+          <span className="flex items-center gap-2 truncate">
+            <Search className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:scale-110" />
+            <span className="truncate font-light text-[11px] sm:text-xs">Search luxury pieces...</span>
+          </span>
+          <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-border/80 bg-background px-1.5 font-mono text-[9px] font-medium text-muted-foreground group-hover:border-foreground/30">
+            <span className="text-[10px]">⌘</span>K
+          </kbd>
+        </button>
+      )}
+
+      {/* Compact Icon Trigger (Always on mobile/tablet, fallback on desktop if pill hidden) */}
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setOpen(true)}
-        className="rounded-full text-foreground hover:bg-secondary"
+        className={`rounded-full text-foreground hover:bg-secondary transition-all ${
+          showDesktopPill ? "xl:hidden" : ""
+        }`}
         title="Search products (Ctrl+K)"
+        aria-label="Search products"
       >
         <Search className="h-4 w-4" />
         <span className="sr-only">Search</span>
@@ -123,6 +148,7 @@ export function SearchDialog() {
                 type="button"
                 onClick={() => setQuery("")}
                 className="text-muted-foreground hover:text-foreground p-1"
+                aria-label="Clear query"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -133,10 +159,10 @@ export function SearchDialog() {
           <div className="max-h-[60vh] overflow-y-auto p-4 space-y-4">
             {/* Search Results */}
             {query.trim().length >= 2 ? (
-              results.length > 0 ? (
+              activeResults.length > 0 ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs font-medium text-muted-foreground px-2">
-                    <span>Products ({results.length})</span>
+                    <span>Products ({activeResults.length})</span>
                     <button
                       type="button"
                       onClick={handleSearchSubmit}
@@ -146,7 +172,7 @@ export function SearchDialog() {
                     </button>
                   </div>
                   <div className="divide-y divide-border/50">
-                    {results.map((product) => (
+                    {activeResults.map((product) => (
                       <div
                         key={product.id}
                         onClick={() => handleSelectProduct(product.slug)}
@@ -182,47 +208,35 @@ export function SearchDialog() {
                             )}
                           </div>
                         </div>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                       </div>
                     ))}
                   </div>
                 </div>
-              ) : !isLoading ? (
-                <div className="py-12 text-center text-muted-foreground">
-                  <p className="text-sm">No products found for &ldquo;{query}&rdquo;</p>
-                  <p className="text-xs mt-1 text-muted-foreground/80">
-                    Try searching for &quot;chair&quot;, &quot;table&quot;, &quot;sofa&quot;, or &quot;lamp&quot;.
-                  </p>
-                </div>
-              ) : null
+              ) : (
+                !isLoading && (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-sm">No products found for &ldquo;{query}&rdquo;</p>
+                    <p className="text-xs mt-1">Try searching for &quot;Sofa&quot;, &quot;Table&quot;, or &quot;Lamp&quot;</p>
+                  </div>
+                )
+              )
             ) : (
-              /* Quick Suggestions When Empty */
+              /* Popular / Suggested Searches */
               <div className="space-y-4 py-2">
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-2">
-                    <Sparkles className="h-3.5 w-3.5 text-brand" />
-                    <span>Popular Searches</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 px-2">
-                    {["Lounge Sofa", "Dining Table", "Ceramic Lamp", "Wool Rug", "Accent Chair"].map(
-                      (item) => (
-                        <button
-                          key={item}
-                          onClick={() => setQuery(item)}
-                          className="px-3 py-1.5 text-xs rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-colors border border-border"
-                        >
-                          {item}
-                        </button>
-                      )
-                    )}
-                  </div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                  <Sparkles className="h-3.5 w-3.5 text-brand" />
+                  <span>Popular Suggestions</span>
                 </div>
-
-                <div className="pt-2 border-t border-border/50 px-2">
-                  <p className="text-xs text-muted-foreground flex items-center justify-between">
-                    <span>Press <kbd className="px-1.5 py-0.5 text-[10px] bg-secondary rounded border">Enter</kbd> to search all</span>
-                    <span><kbd className="px-1.5 py-0.5 text-[10px] bg-secondary rounded border">ESC</kbd> to close</span>
-                  </p>
+                <div className="flex flex-wrap gap-2 px-2">
+                  {["Lounge Sofa", "Dining Table", "Ceramic Lamp", "Armchair", "Linen Rug", "Vases"].map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setQuery(item)}
+                      className="px-3 py-1.5 rounded-full text-xs bg-secondary hover:bg-secondary/80 text-foreground transition-colors"
+                    >
+                      {item}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}

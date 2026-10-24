@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/product/product-card";
 import { ProductFilters } from "@/components/product/product-filters";
+import { ProductSort } from "@/components/product/product-sort";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 
@@ -42,6 +42,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     orderBy = { price: 'asc' };
   } else if (sortParam === 'price_desc') {
     orderBy = { price: 'desc' };
+  } else if (sortParam === 'featured') {
+    orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
+  } else if (sortParam === 'rating') {
+    orderBy = { rating: 'desc' };
+  } else if (sortParam === 'newest') {
+    orderBy = { createdAt: 'desc' };
   }
 
   const [products, categories, userWishlist] = await Promise.all([
@@ -89,11 +95,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </span>
           </div>
 
-          <div className="flex items-center gap-6 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar">
-            <div className="flex items-center gap-6 text-sm font-light">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+            <div className="flex items-center gap-4 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs uppercase tracking-wider font-medium">
               <Link 
-                href="/products" 
-                className={`transition-colors whitespace-nowrap ${!categoryParam ? 'text-foreground font-medium border-b border-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                href={`/products${sortParam ? `?sort=${sortParam}` : ''}`} 
+                className={`transition-colors whitespace-nowrap py-1 ${!categoryParam ? 'text-foreground font-bold border-b-2 border-brand' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 All
               </Link>
@@ -101,26 +107,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <Link 
                   key={cat.id}
                   href={`/products?category=${cat.slug}${sortParam ? `&sort=${sortParam}` : ''}`}
-                  className={`transition-colors whitespace-nowrap ${categoryParam === cat.slug ? 'text-foreground font-medium border-b border-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`transition-colors whitespace-nowrap py-1 ${categoryParam === cat.slug ? 'text-foreground font-bold border-b-2 border-brand' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   {cat.name}
                 </Link>
               ))}
             </div>
 
-            <div className="h-6 w-px bg-border hidden md:block" />
+            <div className="h-4 w-px bg-border hidden sm:block shrink-0" />
 
-            <div className="relative group hidden md:block">
-              <button className="flex items-center gap-2 text-sm font-medium tracking-wide uppercase px-2 py-2">
-                Sort By
-                <ChevronDown className="h-4 w-4" />
-              </button>
-              <div className="absolute right-0 top-full mt-2 w-48 bg-background border border-border shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-40 flex flex-col p-2">
-                <Link href={`?${categoryParam ? `category=${categoryParam}&` : ''}sort=newest`} className="px-4 py-2 text-sm hover:bg-secondary text-left w-full transition-colors">Newest</Link>
-                <Link href={`?${categoryParam ? `category=${categoryParam}&` : ''}sort=price_asc`} className="px-4 py-2 text-sm hover:bg-secondary text-left w-full transition-colors">Price: Low to High</Link>
-                <Link href={`?${categoryParam ? `category=${categoryParam}&` : ''}sort=price_desc`} className="px-4 py-2 text-sm hover:bg-secondary text-left w-full transition-colors">Price: High to Low</Link>
-              </div>
-            </div>
+            <ProductSort currentSort={sortParam} category={categoryParam} />
           </div>
         </div>
 

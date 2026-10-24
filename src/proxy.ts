@@ -1,29 +1,37 @@
 import { NextResponse } from "next/server";
-import NextAuth from "next-auth";
-import { authConfig } from "@/lib/auth.config";
+import type { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 
-const { auth } = NextAuth(authConfig);
+export async function proxy(request: NextRequest) {
+  const { nextUrl } = request;
+  const session = await auth();
+  const isAuthenticated = !!session?.user;
+  const userRole = session?.user?.role;
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isAuthenticated = !!req.auth;
-  const userRole = req.auth?.user?.role;
-  
   const isAdminRoute = nextUrl.pathname.startsWith("/admin");
   const isApiAdminRoute = nextUrl.pathname.startsWith("/api/admin");
 
   if (isAdminRoute || isApiAdminRoute) {
     if (!isAuthenticated) {
+      if (isApiAdminRoute) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/login", nextUrl));
     }
     if (userRole !== "ADMIN") {
+      if (isApiAdminRoute) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
       return NextResponse.redirect(new URL("/", nextUrl));
     }
   }
 
+
   return NextResponse.next();
-});
+}
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin", "/admin/:path*", "/api/admin/:path*"],
 };
+
+
