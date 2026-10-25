@@ -17,6 +17,7 @@ async function main() {
     prisma.category.create({ data: { name: 'Tables', slug: 'tables', description: 'Dining, coffee, and side tables.' } }),
     prisma.category.create({ data: { name: 'Lighting', slug: 'lighting', description: 'Lamps, pendants, and sconces.' } }),
     prisma.category.create({ data: { name: 'Decor', slug: 'decor', description: 'Rugs, mirrors, and accessories.' } }),
+    prisma.category.create({ data: { name: 'Computer', slug: 'computer', description: 'Workspaces, desks, and computing accessories.' } }),
   ])
 
   // 2. Products
@@ -31,8 +32,8 @@ async function main() {
       categoryId: categories[0].id,
       isFeatured: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1550254478-ead40cc54513?q=80&w=800', position: 0 },
-        { url: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800', position: 1 },
+        { url: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
       variants: [
         { color: 'Oatmeal', size: '3-Seater', stock: 5 },
@@ -48,8 +49,8 @@ async function main() {
       categoryId: categories[1].id,
       isFeatured: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=800', position: 0 },
-        { url: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=800', position: 1 },
+        { url: 'https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
     },
     {
@@ -62,7 +63,8 @@ async function main() {
       categoryId: categories[2].id,
       isFeatured: true,
       images: [
-        { url: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
     },
     {
@@ -74,7 +76,8 @@ async function main() {
       categoryId: categories[0].id,
       isFeatured: false,
       images: [
-        { url: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=800', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
     },
     {
@@ -86,7 +89,47 @@ async function main() {
       categoryId: categories[1].id,
       isFeatured: false,
       images: [
-        { url: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?q=80&w=800', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1567016432779-094069958ea5?auto=format&fit=crop&q=80&w=1000', position: 1 },
+      ],
+    },
+    {
+      name: 'Amber Sintered Stone Dining Table',
+      slug: 'amber-sintered-stone-dining-table',
+      description: 'Ultra-luxurious sintered stone dining table with anti-scratch and heat-resistant finish.',
+      price: 88000,
+      stock: 6,
+      categoryId: categories[1].id,
+      isFeatured: true,
+      images: [
+        { url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1604578762246-41134e37f9cc?auto=format&fit=crop&q=80&w=1000', position: 1 },
+      ],
+    },
+    {
+      name: 'Doors Klasika Project Dora',
+      slug: 'doors-klasika-project-dora',
+      description: 'Classic handcrafted wooden interior decorative doors with timeless architectural moulding.',
+      price: 64000,
+      stock: 3,
+      categoryId: categories[3].id,
+      isFeatured: false,
+      images: [
+        { url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&q=80&w=1000', position: 1 },
+      ],
+    },
+    {
+      name: 'TECH- Assemblers',
+      slug: 'tech-assemblers',
+      description: 'Ergonomic high-performance modern tech workstation desk with cable management.',
+      price: 49000,
+      stock: 9,
+      categoryId: categories[4].id,
+      isFeatured: false,
+      images: [
+        { url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
     },
     {
@@ -98,7 +141,8 @@ async function main() {
       categoryId: categories[3].id,
       isFeatured: false,
       images: [
-        { url: 'https://images.unsplash.com/photo-1575414003593-cea80373df9f?q=80&w=800', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&q=80&w=1000', position: 0 },
+        { url: 'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?auto=format&fit=crop&q=80&w=1000', position: 1 },
       ],
     }
   ]
