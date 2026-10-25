@@ -15,7 +15,7 @@ export async function Navbar() {
       console.error("Failed to fetch initial wishlist count:", err);
     }
   }
-
+  // nav
   return (
     <NavbarClient
       user={session?.user}
