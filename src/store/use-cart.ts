@@ -136,7 +136,6 @@ export const useCart = create<CartState>()(
     }),
     {
       name: 'shopora-cart',
-      skipHydration: true, // We handle hydration manually or inside a component
     }
   )
 );

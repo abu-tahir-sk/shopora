@@ -65,7 +65,8 @@ export async function updateOrderStatus(orderId: string, formData: FormData) {
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
   // Also revalidate user's order history
-  revalidatePath("/account/orders");
+  revalidatePath("/orders");
+  revalidatePath(`/orders/${orderId}`);
 }
 
 export async function updatePaymentStatus(orderId: string, formData: FormData) {
@@ -83,5 +84,6 @@ export async function updatePaymentStatus(orderId: string, formData: FormData) {
 
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
-  revalidatePath("/account/orders");
+  revalidatePath("/orders");
+  revalidatePath(`/orders/${orderId}`);
 }

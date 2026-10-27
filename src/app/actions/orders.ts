@@ -73,30 +73,30 @@ export async function cancelOrderAction(orderId: string, reason?: string) {
               },
             });
           }
-        }
-
-        // Restore main product stock
-        const currentProduct = await tx.product.findUnique({
-          where: { id: item.productId },
-        });
-
-        if (currentProduct) {
-          const restoredStock = currentProduct.stock + item.quantity;
-          await tx.product.update({
+        } else {
+          // Restore main product stock only if not a variant
+          const currentProduct = await tx.product.findUnique({
             where: { id: item.productId },
-            data: { stock: restoredStock },
           });
 
-          await tx.inventoryTransaction.create({
-            data: {
-              productId: item.productId,
-              previousStock: currentProduct.stock,
-              changedAmount: item.quantity,
-              newStock: restoredStock,
-              reason: `Customer Order #${order.orderNumber} Cancelled: ${reason || "Customer requested"}`,
-              userId: session.user.id,
-            },
-          });
+          if (currentProduct) {
+            const restoredStock = currentProduct.stock + item.quantity;
+            await tx.product.update({
+              where: { id: item.productId },
+              data: { stock: restoredStock },
+            });
+
+            await tx.inventoryTransaction.create({
+              data: {
+                productId: item.productId,
+                previousStock: currentProduct.stock,
+                changedAmount: item.quantity,
+                newStock: restoredStock,
+                reason: `Customer Order #${order.orderNumber} Cancelled: ${reason || "Customer requested"}`,
+                userId: session.user.id,
+              },
+            });
+          }
         }
       }
     });

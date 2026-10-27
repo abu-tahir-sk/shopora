@@ -15,9 +15,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://shopora.com";
+
 export const metadata: Metadata = {
-  title: "Shopora - Modern Full Stack E-commerce",
-  description: "Shopora is a production-style full-stack e-commerce platform.",
+  metadataBase: new URL(appUrl),
+  title: {
+    default: "Shopora - Curated Luxury & Essentials",
+    template: "%s | Shopora",
+  },
+  description: "Shopora is a modern luxury e-commerce destination with curated collections, express delivery, and seamless checkout.",
+  keywords: ["e-commerce", "luxury shopping", "curated fashion", "lifestyle", "shopora"],
+  authors: [{ name: "Shopora Team" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: appUrl,
+    siteName: "Shopora",
+    title: "Shopora - Curated Luxury & Essentials",
+    description: "Explore curated collections and luxury essentials with seamless checkout at Shopora.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shopora - Curated Luxury & Essentials",
+    description: "Explore curated collections and luxury essentials with seamless checkout at Shopora.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

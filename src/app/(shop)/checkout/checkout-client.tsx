@@ -42,6 +42,8 @@ interface SavedAddress {
   isDefault: boolean;
 }
 
+import { useMounted } from "@/hooks/use-mounted";
+
 interface CheckoutClientProps {
   savedAddresses?: SavedAddress[];
 }
@@ -51,7 +53,7 @@ export function CheckoutClient({ savedAddresses = [] }: CheckoutClientProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Address selection mode: "saved" | "new"
@@ -86,7 +88,6 @@ export function CheckoutClient({ savedAddresses = [] }: CheckoutClientProps) {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     if (session?.user) {
       const parts = session.user.name?.split(" ") || ["", ""];
       setFormData((prev) => ({

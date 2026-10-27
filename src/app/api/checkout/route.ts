@@ -180,15 +180,48 @@ export async function POST(req: Request) {
       await db.$transaction(async (tx) => {
         for (const item of order.items) {
           if (item.variantId) {
-            await tx.productVariant.update({
+            const variant = await tx.productVariant.findUnique({
               where: { id: item.variantId },
-              data: { stock: { decrement: item.quantity } },
             });
+            if (variant) {
+              const newStock = Math.max(0, variant.stock - item.quantity);
+              await tx.productVariant.update({
+                where: { id: item.variantId },
+                data: { stock: newStock },
+              });
+              await tx.inventoryTransaction.create({
+                data: {
+                  productId: item.productId,
+                  variantId: item.variantId,
+                  previousStock: variant.stock,
+                  changedAmount: -item.quantity,
+                  newStock,
+                  reason: `Order #${order.orderNumber} Placed (COD)`,
+                  userId: session.user.id,
+                },
+              });
+            }
           } else {
-            await tx.product.update({
+            const product = await tx.product.findUnique({
               where: { id: item.productId },
-              data: { stock: { decrement: item.quantity } },
             });
+            if (product) {
+              const newStock = Math.max(0, product.stock - item.quantity);
+              await tx.product.update({
+                where: { id: item.productId },
+                data: { stock: newStock },
+              });
+              await tx.inventoryTransaction.create({
+                data: {
+                  productId: item.productId,
+                  previousStock: product.stock,
+                  changedAmount: -item.quantity,
+                  newStock,
+                  reason: `Order #${order.orderNumber} Placed (COD)`,
+                  userId: session.user.id,
+                },
+              });
+            }
           }
         }
 

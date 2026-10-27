@@ -24,8 +24,9 @@ export const sendEmail = async ({
   }
 
   try {
+    const fromAddress = process.env.EMAIL_FROM || 'Shopora <onboarding@resend.dev>';
     const data = await resend.emails.send({
-      from: 'Shopora <orders@shopora.com>', // Update this with verified domain
+      from: fromAddress,
       to,
       subject,
       html,

@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/store/use-cart";
+import { useMounted } from "@/hooks/use-mounted";
 
 export function CartButton() {
   const { openCart, totalItems } = useCart();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const count = mounted ? totalItems() : 0;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <Button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { validateCoupon } from "@/app/actions/coupon";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface CartClientProps {
   isLoggedIn: boolean;
@@ -28,7 +29,7 @@ interface CartClientProps {
 
 export function CartClient({ isLoggedIn }: CartClientProps) {
   const { items, updateQuantity, removeItem, totalPrice } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   
   // Coupon state
@@ -40,10 +41,6 @@ export function CartClient({ isLoggedIn }: CartClientProps) {
     discountAmount: number;
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted) {
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { X, Minus, Plus, ShoppingCart, Loader2 } from "lucide-react";
@@ -14,6 +14,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useCart } from "@/store/use-cart";
 import { formatPrice, cn } from "@/lib/utils";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface CartSidebarProps {
   isLoggedIn?: boolean;
@@ -21,12 +22,8 @@ interface CartSidebarProps {
 
 export function CartSidebar({ isLoggedIn = false }: CartSidebarProps) {
   const { items, isOpen, closeCart, updateQuantity, removeItem, totalPrice } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted) {
     return null; // Prevent hydration errors

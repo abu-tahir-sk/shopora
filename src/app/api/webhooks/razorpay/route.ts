@@ -73,6 +73,63 @@ export async function POST(req: Request) {
           },
         });
 
+        // Decrement stock and log inventory transactions
+        await db.$transaction(async (tx) => {
+          for (const item of updatedOrder.items) {
+            if (item.variantId) {
+              const currentVariant = await tx.productVariant.findUnique({
+                where: { id: item.variantId },
+              });
+              if (currentVariant) {
+                const newStock = Math.max(0, currentVariant.stock - item.quantity);
+                await tx.productVariant.update({
+                  where: { id: item.variantId },
+                  data: { stock: newStock },
+                });
+                await tx.inventoryTransaction.create({
+                  data: {
+                    productId: item.productId,
+                    variantId: item.variantId,
+                    previousStock: currentVariant.stock,
+                    changedAmount: -item.quantity,
+                    newStock,
+                    reason: `Order #${updatedOrder.orderNumber} Webhook Paid`,
+                    userId: updatedOrder.userId,
+                  },
+                });
+              }
+            } else {
+              const currentProduct = await tx.product.findUnique({
+                where: { id: item.productId },
+              });
+              if (currentProduct) {
+                const newStock = Math.max(0, currentProduct.stock - item.quantity);
+                await tx.product.update({
+                  where: { id: item.productId },
+                  data: { stock: newStock },
+                });
+                await tx.inventoryTransaction.create({
+                  data: {
+                    productId: item.productId,
+                    previousStock: currentProduct.stock,
+                    changedAmount: -item.quantity,
+                    newStock,
+                    reason: `Order #${updatedOrder.orderNumber} Webhook Paid`,
+                    userId: updatedOrder.userId,
+                  },
+                });
+              }
+            }
+          }
+
+          if (updatedOrder.couponCode) {
+            await tx.coupon.update({
+              where: { code: updatedOrder.couponCode },
+              data: { usedCount: { increment: 1 } },
+            }).catch(() => {});
+          }
+        });
+
         // Send order confirmation email asynchronously
         if (updatedOrder.user?.email) {
           try {

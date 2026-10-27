@@ -64,41 +64,56 @@ export async function POST(req: Request) {
     await db.$transaction(async (tx) => {
       for (const item of updatedOrder.items) {
         if (item.variantId) {
-          const updateResult = await tx.productVariant.updateMany({
-            where: {
-              id: item.variantId,
-              stock: {
-                gte: item.quantity,
-              },
-            },
-            data: {
-              stock: {
-                decrement: item.quantity,
-              },
-            },
+          const variant = await tx.productVariant.findUnique({
+            where: { id: item.variantId },
           });
 
-          if (updateResult.count === 0) {
+          if (!variant || variant.stock < item.quantity) {
             throw new Error(`Insufficient stock for variant ID ${item.variantId}`);
           }
-        } else {
-          const updateResult = await tx.product.updateMany({
-            where: {
-              id: item.productId,
-              stock: {
-                gte: item.quantity,
-              },
-            },
-            data: {
-              stock: {
-                decrement: item.quantity,
-              },
-            },
+
+          const newStock = variant.stock - item.quantity;
+          await tx.productVariant.update({
+            where: { id: item.variantId },
+            data: { stock: newStock },
           });
 
-          if (updateResult.count === 0) {
+          await tx.inventoryTransaction.create({
+            data: {
+              productId: item.productId,
+              variantId: item.variantId,
+              previousStock: variant.stock,
+              changedAmount: -item.quantity,
+              newStock,
+              reason: `Order #${updatedOrder.orderNumber} Paid (Online)`,
+              userId: session.user.id,
+            },
+          });
+        } else {
+          const product = await tx.product.findUnique({
+            where: { id: item.productId },
+          });
+
+          if (!product || product.stock < item.quantity) {
             throw new Error(`Insufficient stock for product ID ${item.productId}`);
           }
+
+          const newStock = product.stock - item.quantity;
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: newStock },
+          });
+
+          await tx.inventoryTransaction.create({
+            data: {
+              productId: item.productId,
+              previousStock: product.stock,
+              changedAmount: -item.quantity,
+              newStock,
+              reason: `Order #${updatedOrder.orderNumber} Paid (Online)`,
+              userId: session.user.id,
+            },
+          });
         }
       }
 
