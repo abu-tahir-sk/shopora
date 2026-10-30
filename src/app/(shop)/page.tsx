@@ -5,22 +5,33 @@ import { ProductCard } from "@/components/product/product-card";
 import { db } from "@/lib/db";
 
 export default async function Home() {
-  const categories = await db.category.findMany({
-    take: 3,
-    orderBy: { createdAt: "asc" },
-  });
+  let categories: any[] = [];
+  let featuredProducts: any[] = [];
 
-  const featuredProducts = await db.product.findMany({
-    where: { isFeatured: true, isActive: true },
-    take: 4,
-    include: {
-      images: {
-        orderBy: { position: 'asc' },
-        take: 2,
+  try {
+    categories = await db.category.findMany({
+      take: 3,
+      orderBy: { createdAt: "asc" },
+    });
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  }
+
+  try {
+    featuredProducts = await db.product.findMany({
+      where: { isFeatured: true, isActive: true },
+      take: 4,
+      include: {
+        images: {
+          orderBy: { position: 'asc' },
+          take: 2,
+        },
+        category: true,
       },
-      category: true,
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Failed to fetch featured products:", error);
+  }
 
   // Since categories do not have images in DB by default, let's assign dummy images to them based on their names
   const getCategoryImage = (index: number) => {
