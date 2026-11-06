@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { productSchema } from "@/lib/validations/product";
+import { notifySubscribersAboutProduct } from "@/lib/subscriber-notifications";
 
 export async function createProduct(formData: FormData) {
   const session = await auth();
@@ -74,6 +75,23 @@ export async function createProduct(formData: FormData) {
       }
     },
   });
+
+  const shouldNotify = formData.get("notifySubscribers") === "on" || formData.get("notifySubscribers") === "true";
+  if (data.isActive && shouldNotify) {
+    try {
+      const firstImage = data.images?.[0] || null;
+      await notifySubscribersAboutProduct({
+        name: product.name,
+        price: product.price,
+        comparePrice: product.comparePrice,
+        slug: product.slug,
+        description: product.description,
+        imageUrl: firstImage,
+      });
+    } catch (notifyErr) {
+      console.warn("Subscriber notification failed:", notifyErr);
+    }
+  }
 
   revalidatePath("/admin/products");
   revalidatePath("/products");

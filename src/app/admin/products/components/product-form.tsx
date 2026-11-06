@@ -36,6 +36,7 @@ interface ProductFormProps {
 export function ProductForm({ categories, initialData }: ProductFormProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [notifySubscribers, setNotifySubscribers] = useState(!initialData?.id);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -73,6 +74,10 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
           formData.append(key, value === true ? "on" : value.toString());
         }
       });
+
+      if (!initialData?.id && notifySubscribers) {
+        formData.append("notifySubscribers", "on");
+      }
 
       if (initialData?.id) {
         await updateProduct(initialData.id, formData);
@@ -301,6 +306,26 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                     </FormItem>
                   )}
                 />
+
+                {!initialData?.id && (
+                  <div className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md bg-primary/5 border-primary/20 md:col-span-2">
+                    <input
+                      type="checkbox"
+                      id="notifySubscribers"
+                      checked={notifySubscribers}
+                      onChange={(e) => setNotifySubscribers(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 mt-0.5"
+                    />
+                    <div className="space-y-1 leading-none">
+                      <label htmlFor="notifySubscribers" className="text-sm font-medium cursor-pointer">
+                        Email Launch Announcement to Subscribers
+                      </label>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Automatically notify all verified newsletter subscribers about this new product with photo and pricing.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

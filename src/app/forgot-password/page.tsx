@@ -21,12 +21,25 @@ export default function ForgotPasswordPage() {
     }
 
     setIsLoading(true);
-    // Simulate or trigger reset email
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to process request");
+      }
+
       setIsSubmitted(true);
-      toast.success("Password reset link has been dispatched");
-    }, 1000);
+      toast.success(data.message || "Password reset instructions dispatched");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

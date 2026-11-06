@@ -11,7 +11,9 @@ import {
   Tags,
   Ticket,
   MessageSquare,
-  ClipboardList
+  ClipboardList,
+  Mail,
+  Inbox
 } from "lucide-react";
 
 const navItems = [
@@ -20,6 +22,8 @@ const navItems = [
   { name: "Inventory", href: "/admin/inventory", icon: ClipboardList },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Customers", href: "/admin/customers", icon: Users },
+  { name: "Inquiries", href: "/admin/messages", icon: Inbox },
+  { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
   { name: "System Users", href: "/admin/users", icon: Users },
   { name: "Categories", href: "/admin/categories", icon: Tags },
   { name: "Coupons", href: "/admin/coupons", icon: Ticket },

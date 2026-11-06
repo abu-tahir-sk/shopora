@@ -17,7 +17,7 @@ export function ContactForm() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all required fields.");
@@ -25,11 +25,25 @@ export function ContactForm() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit message");
+      }
+
       setSubmitted(true);
-      toast.success("Thank you! Your message has been sent to our concierge team.");
-    }, 1000);
+      toast.success(data.message || "Thank you! Your message has been sent to our concierge team.");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {

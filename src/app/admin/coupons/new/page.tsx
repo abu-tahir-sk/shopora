@@ -21,6 +21,7 @@ export default function NewCouponPage() {
     const res = await createCoupon({
       ...data,
       isActive: data.isActive === "on",
+      notifySubscribers: data.notifySubscribers === "on",
     });
 
     if (res.success) {
@@ -80,9 +81,23 @@ export default function NewCouponPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <input type="checkbox" name="isActive" id="isActive" defaultChecked />
-            <label htmlFor="isActive" className="text-sm font-medium">Active</label>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="isActive" id="isActive" defaultChecked />
+              <label htmlFor="isActive" className="text-sm font-medium">Active (Available for checkout)</label>
+            </div>
+
+            <div className="flex items-start gap-2 p-3 bg-primary/5 border border-primary/20 rounded-md">
+              <input type="checkbox" name="notifySubscribers" id="notifySubscribers" defaultChecked className="mt-0.5" />
+              <div>
+                <label htmlFor="notifySubscribers" className="text-sm font-medium cursor-pointer">
+                  Email this offer code to all newsletter subscribers
+                </label>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Subscribers will receive an attractive email voucher with the discount details and promo code.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="flex gap-4 pt-4 border-t border-border">

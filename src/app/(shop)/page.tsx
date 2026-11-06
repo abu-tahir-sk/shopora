@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ShieldCheck, Truck, RotateCcw, Headset } from "lucide-react";
 import { ProductCard } from "@/components/product/product-card";
 import { db } from "@/lib/db";
+import { NewsletterForm } from "@/components/home/newsletter-form";
 
 export default async function Home() {
   let categories: any[] = [];
@@ -196,16 +197,7 @@ export default async function Home() {
           <p className="text-muted-foreground font-light">
             Get new collections, exclusive offers and product inspiration directly in your inbox.
           </p>
-          <form className="flex w-full max-w-md mx-auto items-center space-x-2 pt-4">
-            <input 
-              type="email" 
-              placeholder="Your email address" 
-              className="flex h-12 w-full rounded-none border border-border bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            />
-            <Button type="submit" className="h-12 rounded-none px-8 bg-foreground text-background hover:bg-foreground/90 uppercase text-xs tracking-widest">
-              Subscribe
-            </Button>
-          </form>
+          <NewsletterForm />
         </div>
       </section>
     </div>
