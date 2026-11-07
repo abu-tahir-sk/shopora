@@ -57,3 +57,46 @@ export async function deleteCoupon(id: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function updateCoupon(id: string, data: any) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized");
+
+  try {
+    await db.coupon.update({
+      where: { id },
+      data: {
+        code: data.code?.trim().toUpperCase(),
+        discountType: data.discountType,
+        discountValue: parseFloat(data.discountValue),
+        minOrderAmount: data.minOrderAmount ? parseFloat(data.minOrderAmount) : null,
+        maxDiscount: data.maxDiscount ? parseFloat(data.maxDiscount) : null,
+        usageLimit: data.usageLimit ? parseInt(data.usageLimit) : null,
+        isActive: Boolean(data.isActive),
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+      },
+    });
+
+    revalidatePath("/admin/coupons");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function toggleCouponStatus(id: string, isActive: boolean) {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized");
+
+  try {
+    await db.coupon.update({
+      where: { id },
+      data: { isActive },
+    });
+
+    revalidatePath("/admin/coupons");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

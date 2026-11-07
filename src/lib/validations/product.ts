@@ -20,7 +20,14 @@ export const productSchema = z.object({
   categoryId: z.string().min(1, "Please select a category"),
   isFeatured: z.boolean().default(false),
   isActive: z.boolean().default(true),
-  images: z.array(z.string().url()).min(1, "At least one image is required"),
+  images: z
+    .array(
+      z.string().refine(
+        (val) => val.startsWith("/") || val.startsWith("http://") || val.startsWith("https://"),
+        { message: "Must be a valid image URL or path" }
+      )
+    )
+    .min(1, "At least one image is required"),
   variants: z.array(variantSchema).default([]),
 });
 

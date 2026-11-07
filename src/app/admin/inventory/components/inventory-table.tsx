@@ -198,9 +198,7 @@ function AdjustStockDialog({ item }: { item: InventoryItem }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" />}>
-        Adjust
-      </DialogTrigger>
+      <DialogTrigger render={<Button size="sm">Adjust</Button>} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Adjust Stock for {item.name}</DialogTitle>

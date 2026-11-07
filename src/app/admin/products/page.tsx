@@ -3,9 +3,10 @@ import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import Image from "next/image";
 import { AdminPagination } from "@/components/ui/pagination";
+import { DeleteProductButton } from "./components/delete-product-button";
 
 export const metadata = {
   title: "Manage Products | Admin",
@@ -108,16 +109,13 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" asChild>
+                      <Button variant="ghost" size="icon" asChild className="h-8 w-8">
                         <Link href={`/admin/products/${product.id}/edit`}>
                           <Edit className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
+                      <DeleteProductButton id={product.id} name={product.name} />
                     </div>
                   </td>
                 </tr>

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AdminPagination } from "@/components/ui/pagination";
+import { CouponActions } from "./components/coupon-actions";
 
 export const metadata = {
   title: "Coupons | Admin",
@@ -67,9 +68,7 @@ export default async function AdminCouponsPage({ searchParams }: AdminCouponsPag
                   )}
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/admin/coupons/${coupon.id}/edit`}>Edit</Link>
-                  </Button>
+                  <CouponActions coupon={{ id: coupon.id, code: coupon.code, isActive: coupon.isActive }} />
                 </td>
               </tr>
             ))}

@@ -1,9 +1,9 @@
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createCategory, deleteCategory } from "./actions";
-import { Trash2 } from "lucide-react";
+import { createCategory } from "./actions";
 import { AdminPagination } from "@/components/ui/pagination";
+import { DeleteCategoryButton } from "./components/delete-category-button";
 
 export const metadata = {
   title: "Categories | Admin",
@@ -85,14 +85,11 @@ export default async function CategoriesPage({ searchParams }: CategoriesPagePro
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <form action={async () => {
-                      "use server";
-                      await deleteCategory(cat.id);
-                    }}>
-                      <Button variant="ghost" size="icon" type="submit" className="text-destructive hover:text-destructive hover:bg-destructive/10" disabled={cat._count.products > 0} title={cat._count.products > 0 ? "Cannot delete category with products" : "Delete category"}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </form>
+                    <DeleteCategoryButton
+                      id={cat.id}
+                      name={cat.name}
+                      hasProducts={cat._count.products > 0}
+                    />
                   </td>
                 </tr>
               ))}
