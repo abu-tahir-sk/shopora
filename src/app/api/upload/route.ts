@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
@@ -45,24 +46,22 @@ export async function POST(req: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64Data = buffer.toString("base64");
 
-    // 1. Try Cloudinary if credentials are present
+    // 1. Try Cloudinary if credentials are present and valid
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY || process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-    if (cloudName && apiKey && apiSecret) {
+    if (cloudName && cloudName !== "shopora" && apiKey && apiSecret) {
       try {
-        const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
         const timestamp = Math.round(Date.now() / 1000);
-
-        // Generate SHA-1 signature for Cloudinary signed upload
         const crypto = await import("crypto");
         const strToSign = `timestamp=${timestamp}${apiSecret}`;
         const signature = crypto.createHash("sha1").update(strToSign).digest("hex");
 
         const cldFormData = new FormData();
-        cldFormData.append("file", base64Data);
+        cldFormData.append("file", `data:${file.type};base64,${base64Data}`);
         cldFormData.append("api_key", apiKey);
         cldFormData.append("timestamp", timestamp.toString());
         cldFormData.append("signature", signature);
@@ -80,30 +79,63 @@ export async function POST(req: NextRequest) {
           if (cldData.secure_url) {
             return NextResponse.json({ url: cldData.secure_url });
           }
-        } else {
-          const errText = await cldRes.text();
-          console.warn("Cloudinary upload failed, falling back to local storage:", errText);
         }
       } catch (cldErr) {
-        console.warn("Cloudinary exception, falling back to local storage:", cldErr);
+        console.warn("Cloudinary upload failed, using database storage:", cldErr);
       }
     }
 
-    // 2. Reliable Local Storage Fallback
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    // 2. Generate clean unique ID for the image
+    const ext = path.extname(file.name) || ".png";
+    const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 25);
+    const uniqueId = `${baseName}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}${ext}`;
+
+    // 3. Save to Neon PostgreSQL Database (100% Serverless / Vercel compatible)
+    try {
+      await db.$executeRawUnsafe(
+        `INSERT INTO "UploadedImage" (id, "mimeType", data, "createdAt")
+         VALUES ($1, $2, $3, NOW())
+         ON CONFLICT (id) DO UPDATE SET data = $3`,
+        uniqueId,
+        file.type,
+        base64Data
+      );
+    } catch (dbErr: any) {
+      console.error("Database image insert error:", dbErr);
+      // Auto-create table if somehow missing
+      await db.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "UploadedImage" (
+          id TEXT PRIMARY KEY,
+          "mimeType" TEXT NOT NULL,
+          data TEXT NOT NULL,
+          "createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+        );
+      `);
+      await db.$executeRawUnsafe(
+        `INSERT INTO "UploadedImage" (id, "mimeType", data, "createdAt")
+         VALUES ($1, $2, $3, NOW())`,
+        uniqueId,
+        file.type,
+        base64Data
+      );
     }
 
-    // Clean unique filename
-    const ext = path.extname(file.name) || ".png";
-    const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 30);
-    const uniqueFilename = `${baseName}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}${ext}`;
-    const filePath = path.join(uploadDir, uniqueFilename);
+    // 4. Also write to local public/uploads ONLY if filesystem is writable (Local development only)
+    try {
+      if (!process.env.VERCEL) {
+        const uploadDir = path.join(process.cwd(), "public/uploads");
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, uniqueId);
+        fs.writeFileSync(filePath, buffer);
+      }
+    } catch {
+      // Safely ignore filesystem restrictions on Vercel / read-only serverless environments
+    }
 
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${uniqueFilename}`;
+    // Return the serving URL
+    const publicUrl = `/api/uploads/${uniqueId}`;
     return NextResponse.json({ url: publicUrl });
   } catch (error: any) {
     console.error("Upload route error:", error);

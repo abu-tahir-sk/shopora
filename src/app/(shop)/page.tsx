@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Truck, RotateCcw, Headset } from "lucide-react
 import { ProductCard } from "@/components/product/product-card";
 import { db } from "@/lib/db";
 import { NewsletterForm } from "@/components/home/newsletter-form";
+import { HeroSlider } from "@/components/home/hero-slider";
 
 export default async function Home() {
   let categories: any[] = [];
@@ -46,32 +47,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full">
-      {/* 5. HERO SECTION */}
-      <section className="relative h-[80vh] min-h-[600px] w-full bg-secondary flex items-center justify-center overflow-hidden">
-        {/* We would use next/image here in production */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-90 mix-blend-multiply"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80")' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
-        
-        <div className="relative z-10 container px-4 flex flex-col items-center text-center text-white mt-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          <h1 className="text-5xl md:text-7xl font-light tracking-tight max-w-4xl mb-6">
-            Designed for modern living.
-          </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl font-light mb-10 leading-relaxed">
-            Thoughtfully selected pieces that bring function, character and timeless style into your everyday spaces.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Button size="lg" className="rounded-none bg-white text-black hover:bg-white/90 px-8 h-14 text-sm tracking-widest uppercase">
-              <Link href="/products">Shop Collection</Link>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-none border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-black px-8 h-14 text-sm tracking-widest uppercase">
-              <Link href="/products?sort=newest">Explore New Arrivals</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* HERO SLIDER WITH FRAMER MOTION & AUTO-SLIDE */}
+      <HeroSlider />
 
       {/* 12. BRAND / COLLECTION STRIP */}
       <div className="border-b border-border bg-background py-6 overflow-hidden">
