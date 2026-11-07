@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { deleteSubscriber } from "./actions";
+import { ClientPagination } from "@/components/ui/pagination";
 
 interface Subscriber {
   id: string;
@@ -19,10 +20,20 @@ export function SubscriberTable({ initialSubscribers }: { initialSubscribers: Su
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const filtered = subscribers.filter((s) =>
     s.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const paginatedSubscribers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleSearchChange = (val: string) => {
+    setSearchTerm(val);
+    setPage(1);
+  };
 
   const handleDelete = async (id: string, email: string) => {
     if (!confirm(`Are you sure you want to remove ${email} from subscribers?`)) return;
@@ -71,7 +82,7 @@ export function SubscriberTable({ initialSubscribers }: { initialSubscribers: Su
           <Input
             placeholder="Search subscriber email..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9 h-10"
           />
         </div>
@@ -120,7 +131,7 @@ export function SubscriberTable({ initialSubscribers }: { initialSubscribers: Su
                   </td>
                 </tr>
               ) : (
-                filtered.map((sub) => (
+                paginatedSubscribers.map((sub) => (
                   <tr key={sub.id} className="hover:bg-muted/30 transition-colors">
                     <td className="py-4 px-4 font-medium flex items-center gap-2">
                       <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -152,6 +163,15 @@ export function SubscriberTable({ initialSubscribers }: { initialSubscribers: Su
               )}
             </tbody>
           </table>
+          <div className="border-t border-border px-4 bg-card">
+            <ClientPagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              pageSize={PAGE_SIZE}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       </div>
     </div>

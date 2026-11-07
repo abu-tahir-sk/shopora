@@ -3,20 +3,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createCategory, deleteCategory } from "./actions";
 import { Trash2 } from "lucide-react";
+import { AdminPagination } from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Categories | Admin",
 };
 
-export default async function CategoriesPage() {
-  const categories = await db.category.findMany({
-    include: {
-      _count: {
-        select: { products: true }
-      }
-    },
-    orderBy: { createdAt: "desc" }
-  });
+interface CategoriesPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function CategoriesPage({ searchParams }: CategoriesPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalCategories, categories] = await Promise.all([
+    db.category.count(),
+    db.category.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        _count: {
+          select: { products: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalCategories / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -89,6 +105,14 @@ export default async function CategoriesPage() {
               )}
             </tbody>
           </table>
+          <div className="border-t border-border px-4 bg-card">
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalCategories}
+              pageSize={PAGE_SIZE}
+            />
+          </div>
         </div>
       </div>
     </div>

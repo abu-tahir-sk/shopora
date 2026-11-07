@@ -5,21 +5,37 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { AdminPagination } from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Manage Products | Admin",
 };
 
-export default async function AdminProductsPage() {
-  const products = await db.product.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      category: true,
-      images: {
-        take: 1,
+interface AdminProductsPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function AdminProductsPage({ searchParams }: AdminProductsPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalProducts, products] = await Promise.all([
+    db.product.count(),
+    db.product.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+        images: {
+          take: 1,
+        },
       },
-    },
-  });
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalProducts / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -116,6 +132,14 @@ export default async function AdminProductsPage() {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="border-t border-border px-4 bg-card">
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalProducts}
+            pageSize={PAGE_SIZE}
+          />
         </div>
       </div>
     </div>

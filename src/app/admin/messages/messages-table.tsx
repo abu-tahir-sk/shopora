@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { updateMessageStatus, deleteMessage } from "./actions";
+import { ClientPagination } from "@/components/ui/pagination";
 
 interface Message {
   id: string;
@@ -23,6 +24,8 @@ export function MessagesTable({ initialMessages }: { initialMessages: Message[] 
   const [messages, setMessages] = useState(messagesWithDates(initialMessages));
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 8;
 
   function messagesWithDates(msgs: Message[]) {
     return msgs.map((m) => ({ ...m, createdAt: new Date(m.createdAt) }));
@@ -34,6 +37,14 @@ export function MessagesTable({ initialMessages }: { initialMessages: Message[] 
     (m.subject && m.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
     m.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const paginatedMessages = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleSearchChange = (val: string) => {
+    setSearchTerm(val);
+    setPage(1);
+  };
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     const nextStatus = currentStatus === "UNREAD" ? "RESOLVED" : "UNREAD";
@@ -73,7 +84,7 @@ export function MessagesTable({ initialMessages }: { initialMessages: Message[] 
         <Input
           placeholder="Search inquiries by customer or topic..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           className="pl-9 h-10"
         />
       </div>
@@ -99,7 +110,7 @@ export function MessagesTable({ initialMessages }: { initialMessages: Message[] 
                     </td>
                   </tr>
                 ) : (
-                  filtered.map((msg) => (
+                  paginatedMessages.map((msg) => (
                     <tr
                       key={msg.id}
                       onClick={() => setSelectedMessage(msg)}
@@ -157,6 +168,15 @@ export function MessagesTable({ initialMessages }: { initialMessages: Message[] 
                 )}
               </tbody>
             </table>
+            <div className="border-t border-border px-4 bg-card">
+              <ClientPagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalItems={filtered.length}
+                pageSize={PAGE_SIZE}
+                onPageChange={setPage}
+              />
+            </div>
           </div>
         </div>
 

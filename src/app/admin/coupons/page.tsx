@@ -1,11 +1,31 @@
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { AdminPagination } from "@/components/ui/pagination";
 
-export default async function AdminCouponsPage() {
-  const coupons = await db.coupon.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+export const metadata = {
+  title: "Coupons | Admin",
+};
+
+interface AdminCouponsPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function AdminCouponsPage({ searchParams }: AdminCouponsPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalCoupons, coupons] = await Promise.all([
+    db.coupon.count(),
+    db.coupon.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalCoupons / PAGE_SIZE);
 
   return (
     <div>
@@ -62,6 +82,14 @@ export default async function AdminCouponsPage() {
             )}
           </tbody>
         </table>
+        <div className="border-t border-border px-4 bg-card">
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalCoupons}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
     </div>
   );

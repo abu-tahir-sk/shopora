@@ -25,6 +25,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
+import { ClientPagination } from "@/components/ui/pagination";
 
 type InventoryItem = {
   type: "product" | "variant";
@@ -40,12 +41,22 @@ type InventoryItem = {
 export function InventoryTable({ initialData }: { initialData: InventoryItem[] }) {
   const [search, setSearch] = useState("");
   const [items, setItems] = useState(initialData);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       item.sku.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredItems.length / PAGE_SIZE) || 1;
+  const paginatedItems = filteredItems.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-4">
@@ -56,11 +67,11 @@ export function InventoryTable({ initialData }: { initialData: InventoryItem[] }
             placeholder="Search by name or SKU..."
             className="pl-8"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
       </div>
-      <div className="border rounded-md">
+      <div className="border rounded-md bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -80,7 +91,7 @@ export function InventoryTable({ initialData }: { initialData: InventoryItem[] }
                 </TableCell>
               </TableRow>
             ) : (
-              filteredItems.map((item) => (
+              paginatedItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.sku}</TableCell>
@@ -105,6 +116,15 @@ export function InventoryTable({ initialData }: { initialData: InventoryItem[] }
             )}
           </TableBody>
         </Table>
+        <div className="border-t border-border px-4 bg-card">
+          <ClientPagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={filteredItems.length}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </div>
       </div>
     </div>
   );

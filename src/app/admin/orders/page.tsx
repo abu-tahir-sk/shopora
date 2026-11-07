@@ -4,26 +4,42 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { ExportOrdersButton } from "./export-orders-button";
+import { AdminPagination } from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Orders | Admin",
 };
 
-export default async function OrdersPage() {
-  const orders = await db.order.findMany({
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
+interface OrdersPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalOrders, orders] = await Promise.all([
+    db.order.count(),
+    db.order.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
+        items: true,
       },
-      items: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalOrders / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -110,6 +126,14 @@ export default async function OrdersPage() {
             )}
           </tbody>
         </table>
+        <div className="border-t border-border px-4 bg-card">
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalOrders}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
     </div>
   );

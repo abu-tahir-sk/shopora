@@ -7,25 +7,41 @@ import {
   ShoppingBag
 } from "lucide-react";
 import { UserActions } from "./user-actions";
+import { AdminPagination } from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Users | Admin",
 };
 
-export default async function UsersPage() {
-  const users = await db.user.findMany({
-    include: {
-      _count: {
-        select: {
-          orders: true,
-          reviews: true,
-        }
-      }
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
+interface UsersPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function UsersPage({ searchParams }: UsersPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalUsers, users] = await Promise.all([
+    db.user.count(),
+    db.user.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        _count: {
+          select: {
+            orders: true,
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalUsers / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -99,6 +115,14 @@ export default async function UsersPage() {
             )}
           </tbody>
         </table>
+        <div className="border-t border-border px-4 bg-card">
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalUsers}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
     </div>
   );

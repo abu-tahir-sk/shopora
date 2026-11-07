@@ -2,19 +2,35 @@ import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Star } from "lucide-react";
 import { approveReview, hideReview, deleteReview } from "./actions";
+import { AdminPagination } from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Reviews | Admin",
 };
 
-export default async function AdminReviewsPage() {
-  const reviews = await db.review.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      product: { select: { name: true } },
-      user: { select: { name: true, email: true } },
-    }
-  });
+interface AdminReviewsPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function AdminReviewsPage({ searchParams }: AdminReviewsPageProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page) || 1);
+  const PAGE_SIZE = 10;
+
+  const [totalReviews, reviews] = await Promise.all([
+    db.review.count(),
+    db.review.findMany({
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      orderBy: { createdAt: "desc" },
+      include: {
+        product: { select: { name: true } },
+        user: { select: { name: true, email: true } },
+      },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalReviews / PAGE_SIZE);
 
   return (
     <div>
@@ -94,6 +110,14 @@ export default async function AdminReviewsPage() {
             )}
           </tbody>
         </table>
+        <div className="border-t border-border px-4 bg-card">
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalReviews}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
     </div>
   );
