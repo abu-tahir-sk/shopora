@@ -39,6 +39,16 @@ export const metadata: Metadata = {
     title: "Shopora - Curated Luxury & Essentials",
     description: "Explore curated collections and luxury essentials with seamless checkout at Shopora.",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/icon-light.png", media: "(prefers-color-scheme: light)" },
+      { url: "/images/icon-dark.png", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

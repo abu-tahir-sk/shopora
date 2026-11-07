@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -128,10 +129,49 @@ export function NavbarClient({ user, wishlistCount = 0 }: NavbarClientProps) {
 
           {/* Brand Logo */}
           <div className="flex items-center justify-center md:justify-start">
-            <Link href="/" className="group flex items-center gap-1.5 focus:outline-none">
-              <span className="font-semibold text-2xl tracking-[0.18em] uppercase transition-colors">
-                Shop<span className="text-brand font-light transition-opacity group-hover:opacity-80">ora</span>
-              </span>
+            <Link href="/" className="group flex items-center gap-2 focus:outline-none">
+              {/* Mobile Phone Responsive Logo (< md): Compact Icon Badge + Wordmark */}
+              <div className="flex md:hidden items-center gap-2">
+                <Image
+                  src="/images/icon-light.png"
+                  alt="Shopora"
+                  width={36}
+                  height={36}
+                  priority
+                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg object-contain shadow-2xs dark:hidden transition-transform group-hover:scale-105"
+                />
+                <Image
+                  src="/images/icon-dark.png"
+                  alt="Shopora"
+                  width={36}
+                  height={36}
+                  priority
+                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg object-contain shadow-2xs hidden dark:block transition-transform group-hover:scale-105"
+                />
+                <span className="font-semibold text-lg sm:text-xl tracking-[0.16em] uppercase transition-colors">
+                  Shop<span className="text-brand font-light transition-opacity group-hover:opacity-80">ora</span>
+                </span>
+              </div>
+
+              {/* Desktop Full Logo (>= md): Full Horizontal Brand Logo (Light & Dark theme responsive) */}
+              <div className="hidden md:flex items-center">
+                <Image
+                  src="/images/logo-light.png"
+                  alt="Shopora Home & Living"
+                  width={172}
+                  height={41}
+                  priority
+                  className="h-9 lg:h-10 w-auto object-contain dark:hidden transition-opacity group-hover:opacity-85"
+                />
+                <Image
+                  src="/images/logo-dark.png"
+                  alt="Shopora Home & Living"
+                  width={172}
+                  height={41}
+                  priority
+                  className="h-9 lg:h-10 w-auto object-contain hidden dark:block transition-opacity group-hover:opacity-85"
+                />
+              </div>
             </Link>
           </div>
 

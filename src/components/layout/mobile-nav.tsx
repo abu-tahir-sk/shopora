@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { 
   Menu, 
@@ -77,8 +78,22 @@ export function MobileNav({ user, wishlistCount = 0 }: MobileNavProps) {
           {/* Header */}
           <SheetHeader className="p-5 border-b border-border flex flex-row items-center justify-between text-left">
             <SheetTitle className="sr-only">Shopora Navigation</SheetTitle>
-            <Link href="/" onClick={handleLinkClick} className="font-semibold text-xl tracking-[0.18em] uppercase">
-              Shop<span className="text-brand font-light">ora</span>
+            <Link href="/" onClick={handleLinkClick} className="flex items-center gap-2.5 font-semibold text-xl tracking-[0.18em] uppercase">
+              <Image
+                src="/images/icon-light.png"
+                alt="Shopora Icon"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-lg object-contain dark:hidden"
+              />
+              <Image
+                src="/images/icon-dark.png"
+                alt="Shopora Icon"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-lg object-contain hidden dark:block"
+              />
+              <span>Shop<span className="text-brand font-light">ora</span></span>
             </Link>
           </SheetHeader>
 
