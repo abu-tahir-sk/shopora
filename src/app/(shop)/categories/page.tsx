@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight, Layers, Sparkles, ChevronRight, Package, Truck, ShieldCheck } from "lucide-react";
 import { db } from "@/lib/db";
 
 export const metadata: Metadata = {
@@ -31,19 +31,58 @@ export default async function CategoriesPage() {
 
   return (
     <div className="bg-background min-h-screen pb-24">
-      {/* Header Banner */}
-      <div className="bg-secondary/40 py-16 md:py-24 border-b border-border text-center px-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-xs uppercase tracking-widest text-muted-foreground mb-4">
-          <Layers className="h-3.5 w-3.5 text-brand" />
-          <span>Curated Collections</span>
+      {/* Luxury Hero Banner */}
+      <section className="relative min-h-[340px] md:min-h-[400px] w-full flex items-center justify-center overflow-hidden border-b border-border">
+        {/* Background photo with subtle depth */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
+          style={{ backgroundImage: `url("${defaultImage}")` }}
+        />
+        {/* Multi-layered cinematic contrast gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/40" />
+        <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/60" />
+
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 md:px-8 max-w-4xl flex flex-col items-center text-center text-white py-14 md:py-20 animate-in fade-in slide-in-from-bottom-3 duration-700">
+          {/* Breadcrumb Navigation */}
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-[11px] sm:text-xs tracking-widest uppercase text-white/70 mb-5 font-medium">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <ChevronRight className="h-3 w-3 text-white/40" />
+            <span className="text-white font-semibold">Categories</span>
+          </nav>
+
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-[11px] sm:text-xs tracking-widest uppercase font-medium mb-5 text-white/95 shadow-sm">
+            <Layers className="h-3.5 w-3.5 text-brand" />
+            <span>Curated Collections • Autumn / Winter 2026</span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight mb-5 text-white capitalize leading-[1.1] text-balance">
+            Explore by Category
+          </h1>
+
+          {/* Subtitle / Description */}
+          <p className="text-white/90 max-w-2xl font-light leading-relaxed text-sm sm:text-base md:text-lg mb-8 text-balance">
+            Every piece is designed to harmonize with your living space. Browse by functional category to find the perfect architectural addition to your home.
+          </p>
+
+          {/* Micro badges / highlights */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs text-white/85 font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/15 shadow-xs">
+              <Package className="h-3.5 w-3.5 text-brand" />
+              {categories.length} Specialized Departments
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/15 shadow-xs">
+              <Truck className="h-3.5 w-3.5 text-emerald-400" />
+              White-Glove Delivery Included
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/15 shadow-xs">
+              <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
+              Handcrafted Artisanal Guarantee
+            </span>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-4">
-          Explore by Category
-        </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto font-light leading-relaxed text-sm md:text-base">
-          Every piece is designed to harmonize with your space. Browse by functional category to find the perfect addition to your home.
-        </p>
-      </div>
+      </section>
 
       {/* Categories Grid */}
       <div className="container mx-auto px-4 md:px-8 max-w-7xl pt-12">

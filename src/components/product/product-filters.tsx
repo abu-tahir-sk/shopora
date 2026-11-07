@@ -42,9 +42,9 @@ export function ProductFilters({ categories }: { categories: { id: string, name:
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger render={
-        <button className="flex items-center gap-2 text-sm font-medium tracking-wide uppercase border border-border px-4 py-2 hover:bg-secondary transition-colors">
-          <SlidersHorizontal className="h-4 w-4" />
-          Filter & Search
+        <button className="flex items-center gap-2 text-xs font-medium border border-border/80 px-3.5 py-1.5 rounded-lg bg-background hover:bg-secondary hover:border-foreground/30 transition-all shadow-2xs">
+          <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+          <span>Filters & Search</span>
         </button>
       } />
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">

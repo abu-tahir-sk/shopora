@@ -2,8 +2,8 @@ import { db } from "@/lib/db";
 import { ProductCard } from "@/components/product/product-card";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductSort } from "@/components/product/product-sort";
+import { ShopAdBanner } from "@/components/product/shop-ad-banner";
 import Link from "next/link";
-
 import { auth } from "@/lib/auth";
 
 export const metadata = {
@@ -74,64 +74,68 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const wishlistedIds = new Set(userWishlist.map(w => w.productId));
 
   return (
-    <div className="w-full pb-24">
-      {/* Header Banner */}
-      <div className="bg-secondary/50 py-16 md:py-24 border-b border-border text-center px-4">
-        <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-4 capitalize">
-          {categoryParam ? categoryParam.replace('-', ' ') : "All Products"}
-        </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
-          Thoughtfully designed pieces that balance form and function. Explore our collection of premium materials and timeless silhouettes.
-        </p>
-      </div>
+    <div className="w-full pb-24 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-7xl pt-4 sm:pt-6">
+        {/* Ad Hero Banner (Matches Reference Image 1) */}
+        <ShopAdBanner categoryName={categoryParam} totalProducts={products.length} />
 
-      <div className="container mx-auto px-4 md:px-8 max-w-7xl pt-8">
-        {/* Toolbar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-8 border-b border-border">
-          <div className="flex items-center gap-2">
-            <ProductFilters categories={categories} />
-            <span className="text-sm text-muted-foreground hidden md:inline-block ml-4">
-              Showing {products.length} products {qParam ? `for "${qParam}"` : ''}
+        {/* Toolbar: Filter by pills, View Switcher & Sort (Matches Reference Image 1) */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-border/70">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Filter by
             </span>
+            <ProductFilters categories={categories} />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div className="flex items-center gap-4 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs uppercase tracking-wider font-medium">
-              <Link 
-                href={`/products${sortParam ? `?sort=${sortParam}` : ''}`} 
-                className={`transition-colors whitespace-nowrap py-1 ${!categoryParam ? 'text-foreground font-bold border-b-2 border-brand' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                All
-              </Link>
-              {categories.map((cat) => (
-                <Link 
-                  key={cat.id}
-                  href={`/products?category=${cat.slug}${sortParam ? `&sort=${sortParam}` : ''}`}
-                  className={`transition-colors whitespace-nowrap py-1 ${categoryParam === cat.slug ? 'text-foreground font-bold border-b-2 border-brand' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
-
-            <div className="h-4 w-px bg-border hidden sm:block shrink-0" />
-
+          <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+            <span className="text-xs text-muted-foreground font-medium">
+              {products.length} products
+            </span>
+            <div className="h-3.5 w-px bg-border hidden sm:block" />
             <ProductSort currentSort={sortParam} category={categoryParam} />
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Category quick links */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none text-xs uppercase tracking-wider font-medium">
+          <Link 
+            href={`/products${sortParam ? `?sort=${sortParam}` : ''}`} 
+            className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap border text-xs ${
+              !categoryParam 
+                ? 'bg-foreground text-background font-bold border-foreground shadow-xs' 
+                : 'bg-card text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground'
+            }`}
+          >
+            All Products
+          </Link>
+          {categories.map((cat) => (
+            <Link 
+              key={cat.id}
+              href={`/products?category=${cat.slug}${sortParam ? `&sort=${sortParam}` : ''}`}
+              className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap border text-xs ${
+                categoryParam === cat.slug 
+                  ? 'bg-foreground text-background font-bold border-foreground shadow-xs' 
+                  : 'bg-card text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground'
+              }`}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Product Grid (Matches Reference Image 2: 5 columns on desktop, 2 on mobile) */}
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4 md:gap-5">
             {products.map((product) => (
               <ProductCard key={product.id} product={product as any} isWishlisted={wishlistedIds.has(product.id)} />
             ))}
           </div>
         ) : (
-          <div className="py-24 text-center">
+          <div className="py-24 text-center bg-card rounded-2xl border border-border">
             <h3 className="text-xl font-medium mb-2">No products found</h3>
             <p className="text-muted-foreground mb-6">We couldn't find any products matching your current filters.</p>
-            <Link href="/products" className="inline-flex items-center justify-center bg-foreground text-background px-6 py-3 text-sm font-medium tracking-wide uppercase hover:bg-foreground/90 transition-colors">
+            <Link href="/products" className="inline-flex items-center justify-center bg-foreground text-background px-6 py-3 text-sm font-medium tracking-wide uppercase hover:bg-foreground/90 transition-colors rounded-lg">
               Clear Filters
             </Link>
           </div>
