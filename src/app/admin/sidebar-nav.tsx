@@ -30,11 +30,15 @@ const navItems = [
   { name: "Reviews", href: "/admin/reviews", icon: MessageSquare },
 ];
 
-export function SidebarNav() {
+interface SidebarNavProps {
+  onItemClick?: () => void;
+}
+
+export function SidebarNav({ onItemClick }: SidebarNavProps = {}) {
   const pathname = usePathname();
 
   return (
-    <nav className="space-y-1.5 px-3">
+    <nav className="space-y-1 px-3">
       {navItems.map((item) => {
         const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href));
         
@@ -42,21 +46,22 @@ export function SidebarNav() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onItemClick}
             className={cn(
-              "group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative overflow-hidden",
+              "group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden",
               isActive 
-                ? "text-white bg-slate-800/90 shadow-md shadow-black/10" 
-                : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-100"
+                ? "text-brand font-semibold bg-brand/10 dark:bg-brand/15 border border-brand/25 shadow-2xs" 
+                : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
             )}
           >
             {isActive && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand rounded-r-full" />
             )}
             <item.icon className={cn(
-              "h-5 w-5 transition-colors duration-300",
-              isActive ? "text-indigo-400" : "text-slate-500 group-hover:text-slate-300"
+              "h-4 w-4 shrink-0 transition-colors duration-200",
+              isActive ? "text-brand" : "text-muted-foreground group-hover:text-foreground"
             )} />
-            {item.name}
+            <span className="truncate">{item.name}</span>
           </Link>
         );
       })}
