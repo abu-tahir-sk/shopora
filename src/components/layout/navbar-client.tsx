@@ -96,9 +96,9 @@ export function NavbarClient({ user, wishlistCount = 0 }: NavbarClientProps) {
 
   const navItems = [
     { name: "Shop", href: "/products", hasMegaMenu: true },
-    { name: "New Arrivals", href: "/products?sort=newest", hasMegaMenu: false, badge: null },
+    { name: "New Arrivals", href: "/new-arrivals", hasMegaMenu: false, badge: "New" },
     { name: "Categories", href: "/categories", hasMegaMenu: true },
-    { name: "Offers", href: "/products", hasMegaMenu: false, badge: "Sale" },
+    { name: "Offers", href: "/offers", hasMegaMenu: false, badge: "Sale" },
   ];
 
   return (
@@ -181,7 +181,10 @@ export function NavbarClient({ user, wishlistCount = 0 }: NavbarClientProps) {
             className="hidden md:flex items-center justify-center gap-1 lg:gap-2 text-xs font-semibold tracking-wider uppercase"
           >
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/products"
+                  ? pathname === "/products"
+                  : pathname.startsWith(item.href);
               const isHovered = hoveredNav === item.name;
 
               return (

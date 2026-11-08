@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Star, Truck, ShieldCheck, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { ProductGallery } from "@/components/product/product-gallery";
+import { ProductDescription, getProductSummary } from "@/components/product/product-description";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const p = await params;
@@ -123,7 +124,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               )}
 
               <p className="text-muted-foreground font-light leading-relaxed mb-8">
-                {product.description}
+                {getProductSummary(product.description)}
               </p>
 
               {/* Variants */}
@@ -193,13 +194,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <div className="border-t border-border flex flex-col text-sm">
                 <details className="group border-b border-border" open>
                   <summary className="flex cursor-pointer list-none items-center justify-between py-5 font-medium uppercase tracking-widest">
-                    <span>Details</span>
+                    <span>Description & Specifications</span>
                     <span className="transition group-open:rotate-180">
                       <ChevronDownIcon />
                     </span>
                   </summary>
-                  <div className="pb-5 font-light text-muted-foreground leading-relaxed">
-                    Designed for comfort and longevity. Crafted from premium materials carefully selected for their durability and aesthetic appeal. This piece represents the perfect balance between modern minimalism and everyday functionality.
+                  <div className="pb-6">
+                    <ProductDescription content={product.description} />
                   </div>
                 </details>
                 <details className="group border-b border-border">

@@ -50,9 +50,9 @@ export function MobileNav({ user, wishlistCount = 0 }: MobileNavProps) {
 
   const navLinks = [
     { name: "All Collections", href: "/products", icon: ShoppingBag, badge: null },
-    { name: "New Arrivals", href: "/products?sort=newest", icon: Sparkles, badge: "New" },
+    { name: "New Arrivals", href: "/new-arrivals", icon: Sparkles, badge: "New" },
     { name: "Categories", href: "/categories", icon: Layers, badge: null },
-    { name: "Curated Offers", href: "/products", icon: Tag, badge: "Sale" },
+    { name: "Curated Offers", href: "/offers", icon: Tag, badge: "Sale" },
   ];
 
   const popularCategories = [
@@ -104,7 +104,10 @@ export function MobileNav({ user, wishlistCount = 0 }: MobileNavProps) {
               <span>Explore Store</span>
             </p>
             {navLinks.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/products"
+                  ? pathname === "/products"
+                  : pathname.startsWith(item.href);
               const Icon = item.icon;
               return (
                 <Link

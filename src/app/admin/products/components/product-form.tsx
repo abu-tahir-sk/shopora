@@ -21,7 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Table, Eye, EyeOff } from "lucide-react";
+import { ProductDescription } from "@/components/product/product-description";
 
 interface Category {
   id: string;
@@ -37,6 +38,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [notifySubscribers, setNotifySubscribers] = useState(!initialData?.id);
+  const [showDescPreview, setShowDescPreview] = useState(false);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -138,14 +140,82 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                 name="description"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Description</FormLabel>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                      <FormLabel className="text-sm font-medium">Description & Specifications Table</FormLabel>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const current = field.value || "";
+                            const template = `| Item Code | SH-RK-IRENE-WN |
+| Color | Wenge |
+| Size (cm) | 45 H x 85 W x 40 D |
+| Primary Material | High Durability Engineered Board |
+| Hardware | Hettich / Hafele / Ozone |
+| Board | Century / Merino / Action Tessa |
+| Warranty | 1 year |
+| Delivery | 12-15 days (Delhi NCR- 5-7 days) |
+
+---
+
+- Space-Saving Design: This stylish storage bench features open shelves to neatly organize and display up to 12 pairs of shoes.
+- Premium Construction: Crafted from high-quality engineered wood with a rich walnut finish for long-lasting durability.
+- Convenient Seating: The padded bench top provides comfortable seating while putting on or taking off shoes.
+- Elevate your entryway or living space with this stylish and functional furniture piece.`;
+                            field.onChange(current ? `${current}\n\n${template}` : template);
+                            setShowDescPreview(true);
+                            toast.success("Specifications table template added!");
+                          }}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium transition-colors border"
+                        >
+                          <Table className="h-3.5 w-3.5 text-primary" />
+                          Insert Spec Table
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const current = field.value || "";
+                            field.onChange(current ? `${current}\n| Specification Name | Value Details |` : `| Specification Name | Value Details |`);
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium transition-colors border"
+                        >
+                          <Plus className="h-3 w-3" />
+                          Add Row
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setShowDescPreview(!showDescPreview)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground font-medium transition-colors border"
+                        >
+                          {showDescPreview ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                          {showDescPreview ? "Hide Preview" : "Live Preview"}
+                        </button>
+                      </div>
+                    </div>
+
                     <FormControl>
                       <textarea
-                        className="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        placeholder="Enter product description..."
+                        rows={7}
+                        className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Enter product description, or click 'Insert Spec Table' above to automatically add a formatted specifications table..."
                         {...field}
                       />
                     </FormControl>
+                    <p className="text-[12px] text-muted-foreground">
+                      Tip: Use <code className="bg-muted px-1 py-0.5 rounded text-foreground font-mono">| Key | Value |</code> format to generate table rows, <code className="bg-muted px-1 py-0.5 rounded text-foreground font-mono">---</code> for horizontal divider, and <code className="bg-muted px-1 py-0.5 rounded text-foreground font-mono">- Bullet</code> for feature highlights.
+                    </p>
+
+                    {showDescPreview && (
+                      <div className="mt-4 p-4 rounded-lg border border-border bg-card shadow-sm">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                          <Eye className="h-3.5 w-3.5" />
+                          Live Customer View Preview
+                        </div>
+                        <ProductDescription content={field.value} />
+                      </div>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

@@ -26,7 +26,7 @@ const slides: HeroSlide[] = [
     description:
       "Thoughtfully selected pieces that bring function, character and timeless elegance into your everyday spaces.",
     primaryBtn: { text: "Shop Collection", href: "/products" },
-    secondaryBtn: { text: "Explore New Arrivals", href: "/products?sort=newest" },
+    secondaryBtn: { text: "Explore New Arrivals", href: "/new-arrivals" },
     image:
       "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=85",
   },
@@ -50,7 +50,7 @@ const slides: HeroSlide[] = [
     description:
       "Warm sculptural illumination, tactile ceramics, and contemporary decor pieces that redefine aesthetic living.",
     primaryBtn: { text: "Shop All Decor", href: "/products" },
-    secondaryBtn: { text: "Exclusive Offers", href: "/products" },
+    secondaryBtn: { text: "Exclusive Offers", href: "/offers" },
     image:
       "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=85",
   },

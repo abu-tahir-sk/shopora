@@ -167,10 +167,18 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/products?sort=newest"
+                  href="/new-arrivals"
                   className="text-[#f0ede9]/75 hover:text-white transition-colors"
                 >
                   New Arrivals
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/offers"
+                  className="text-[#f0ede9]/75 hover:text-white transition-colors"
+                >
+                  Exclusive Offers
                 </Link>
               </li>
               <li>
